@@ -1,79 +1,73 @@
 package com.shakil.dailylifemanager.utils
 
-import java.text.SimpleDateFormat
+import android.text.format.DateFormat
 import java.util.Calendar
-import java.util.Locale
+import java.util.Date
 
-object DateTimeUtils {
-    
-    fun getCurrentDate(): String {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return dateFormat.format(Calendar.getInstance().time)
-    }
-    
-    fun getCurrentTime(): String {
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return timeFormat.format(Calendar.getInstance().time)
-    }
-    
-    fun formatDate(dateString: String): String {
-        return try {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-            val date = inputFormat.parse(dateString)
-            outputFormat.format(date ?: Calendar.getInstance().time)
-        } catch (e: Exception) {
-            dateString
-        }
-    }
-    
-    fun formatTime(timeString: String): String {
-        return try {
-            val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-            val time = inputFormat.parse(timeString)
-            outputFormat.format(time ?: Calendar.getInstance().time)
-        } catch (e: Exception) {
-            timeString
-        }
-    }
-    
-    fun getDayOfWeek(dateString: String): String {
-        return try {
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val date = dateFormat.parse(dateString)
+class DateTimeUtils {
+    companion object {
+        fun getCurrentDate(): String {
             val calendar = Calendar.getInstance()
-            calendar.time = date ?: Calendar.getInstance().time
-            val dayFormat = SimpleDateFormat("EEEE", Locale.getDefault())
-            dayFormat.format(calendar.time)
-        } catch (e: Exception) {
-            ""
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH) + 1
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            return String.format("%04d-%02d-%02d", year, month, day)
         }
-    }
-    
-    fun getMonthYear(dateString: String): String {
-        return try {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-            val date = inputFormat.parse(dateString)
-            outputFormat.format(date ?: Calendar.getInstance().time)
-        } catch (e: Exception) {
-            dateString
+
+        fun formatDate(dateString: String): String {
+            try {
+                val parts = dateString.split("-")
+                if (parts.size == 3) {
+                    val day = parts[2]
+                    val month = parts[1]
+                    val year = parts[0]
+                    return "$day/${month.toInt()}/$year"
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return dateString
         }
-    }
-    
-    fun isDateToday(dateString: String): Boolean {
-        val todayDate = getCurrentDate()
-        return dateString == todayDate
-    }
-    
-    fun isDatePast(dateString: String): Boolean {
-        val todayDate = getCurrentDate()
-        return dateString < todayDate
-    }
-    
-    fun isDateFuture(dateString: String): Boolean {
-        val todayDate = getCurrentDate()
-        return dateString > todayDate
+
+        fun getDayOfWeek(dateString: String): String {
+            return try {
+                val parts = dateString.split("-")
+                if (parts.size == 3) {
+                    val calendar = Calendar.getInstance()
+                    calendar.set(parts[0].toInt(), parts[1].toInt() - 1, parts[2].toInt())
+                    val dayOfWeek =
+                        DateFormat.format("EEEE", calendar.time).toString()
+                    dayOfWeek
+                } else {
+                    "Unknown"
+                }
+            } catch (e: Exception) {
+                "Unknown"
+            }
+        }
+
+        fun getDateFromMillis(millis: Long): String {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = millis
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH) + 1
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            return String.format("%04d-%02d-%02d", year, month, day)
+        }
+
+        fun getMillisFromDate(dateString: String): Long {
+            return try {
+                val parts = dateString.split("-")
+                if (parts.size == 3) {
+                    val calendar = Calendar.getInstance()
+                    calendar.set(parts[0].toInt(), parts[1].toInt() - 1, parts[2].toInt())
+                    calendar.timeInMillis
+                } else {
+                    System.currentTimeMillis()
+                }
+            } catch (e: Exception) {
+                System.currentTimeMillis()
+            }
+        }
     }
 }
