@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Daily Life Manager Pro</string>
+    <string name="home_title">Home</string>
+    <string name="tasks_title">Tasks</string>
+    <string name="calendar_title">Calendar</string>
+    <string name="reminders_title">Reminders</string>
+    <string name="settings_title">Settings</string>
+</resources>
